@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option go_package = "./rpc";
+
+service TaskService {
+  rpc Call(TaskReq) returns (TaskResp);
+}
+
+
+message TaskReq {
+    int32 id = 1;//任务id
+    int32 logId = 2;// 日志id
+    string jobHandler = 3;//任务标识、找到对应的handler
+    string params = 4; //任务参数
+    int32 run_schema = 5; //任务类型
+
+}
+
+message TaskResp {
+    int32 id = 1;//任务id
+    int32 logId = 2;// 日志id
+    int32 status = 3;//执行状态
+    string execStartTime = 4;//执行器开始执行时间
+    string execEndTime = 5; //执行器执行完时间
+    string logMsg = 6;//日志信息
+}
