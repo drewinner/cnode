@@ -1,4 +1,4 @@
-module github.com/drewinner/cnode
+module github.com/drewinner/gnode
 
 go 1.16
 

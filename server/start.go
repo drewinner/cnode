@@ -2,7 +2,7 @@ package server
 
 import (
 	"fmt"
-	pb "github.com/drewinner/gutils/rpc/proto/rpc"
+	pb "github.com/drewinner/gnode/proto/rpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
 	"net"

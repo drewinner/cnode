@@ -2,7 +2,7 @@ package client
 
 import (
 	"context"
-	pb "github.com/drewinner/gutils/rpc/proto/rpc"
+	pb "github.com/drewinner/gnode/proto/rpc"
 	"time"
 )
 
@@ -15,7 +15,7 @@ import (
 *	@param:params 参数
 *	@param:timeout 超时时间、如果设置为0、设置为1秒过期
  */
-func Invoke(address string, id, logId int32, taskHandler, params string, timeout int) (resp *pb.TaskResp, err error) {
+func Invoke(runSchema int32, address string, id, logId int32, taskHandler, params string, timeout int) (resp *pb.TaskResp, err error) {
 	if timeout == 0 {
 		timeout = 1
 	}

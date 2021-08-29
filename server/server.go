@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 )
-import pb "github.com/drewinner/gutils/rpc/proto/rpc"
+import pb "github.com/drewinner/gnode/proto/rpc"
 
 type Server struct {
 	pb.UnimplementedTaskServiceServer
