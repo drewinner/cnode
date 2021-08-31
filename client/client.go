@@ -30,6 +30,7 @@ func Invoke(runSchema int32, address string, id, logId int32, taskHandler, param
 		LogId:      logId,
 		JobHandler: taskHandler,
 		Params:     params,
+		RunSchema:  runSchema,
 	})
 	return r, err
 }
