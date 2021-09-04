@@ -12,6 +12,7 @@ type Server struct {
 	pb.UnimplementedTaskServiceServer
 }
 
+// Call
 /**
 *	runSchema判断命令类型 运行模式 1 glue模式go 2 glue shell模式 3 glue http模式
  */
@@ -26,7 +27,7 @@ func (s *Server) Call(ctx context.Context, req *pb.TaskReq) (*pb.TaskResp, error
 		LogMsg:        "执行失败",
 	}
 	switch req.RunSchema {
-	case common.RUN_SCHEMA_GLUE_GO:
+	case common.RUN_SCHEMA_GO:
 		handler, err := Get(req.JobHandler)
 		if err != nil {
 			return nil, err
@@ -34,7 +35,7 @@ func (s *Server) Call(ctx context.Context, req *pb.TaskReq) (*pb.TaskResp, error
 		r := handler.HandlerFunc(ctx, req.Params)
 		rs.Status = r.status
 		rs.LogMsg = r.msg
-	case common.RUN_SCHEMA_GLUE_SHELL:
+	case common.RUN_SCHEMA_SHELL:
 		output, err := common.Exec(ctx, req.GetParams())
 		if err == nil {
 			rs.Status = 1
@@ -43,7 +44,7 @@ func (s *Server) Call(ctx context.Context, req *pb.TaskReq) (*pb.TaskResp, error
 			rs.LogMsg = err.Error()
 		}
 		rs.ExecEndTime = time.Now().String()
-	case common.RUN_SCHEMA_GLUE_HTTP:
+	case common.RUN_SCHEMA_HTTP:
 		fmt.Print("http")
 	default:
 		fmt.Println("default..")

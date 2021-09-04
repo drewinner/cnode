@@ -4,14 +4,14 @@ package common
 
 import (
 	"context"
-	"errors"
 	"os/exec"
 	"strconv"
 	"syscall"
 )
 
-type Result struct {
-	output string
+
+type ExeRs struct {
+	rs string
 	err    error
 }
 
@@ -22,10 +22,10 @@ func Exec(ctx context.Context, command string) (string, error) {
 	cmd.SysProcAttr = &syscall.SysProcAttr{
 		HideWindow: true,
 	}
-	var resultChan = make(chan Result)
+	var resultChan = make(chan ExeRs)
 	go func() {
 		output, err := cmd.CombinedOutput()
-		resultChan <- Result{string(output), err}
+		resultChan <- ExeRs{string(output), err}
 	}()
 	select {
 	case <-ctx.Done():
@@ -33,14 +33,14 @@ func Exec(ctx context.Context, command string) (string, error) {
 			_ = exec.Command("taskkill", "/F", "/T", "/PID", strconv.Itoa(cmd.Process.Pid)).Run()
 			_ = cmd.Process.Kill()
 		}
-		return "", errors.New("timeout killed")
+		return "", fmt.Errorf("cmd:%s,err:%s",command,"timeout")
 	case result := <-resultChan:
 		return convertEncoding(result.output), result.err
 	}
 }
 
 func convertEncoding(outputGBK string) string {
-	// windows平台编码为gbk，需转换为utf8
+	// 转换为utf8编码
 	outputUTF8, ok := GBK2UTF8(outputGBK)
 	if ok {
 		return outputUTF8

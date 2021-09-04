@@ -4,34 +4,34 @@ package common
 
 import (
 	"context"
-	"errors"
+	"fmt"
 	"os/exec"
 	"syscall"
 )
 
-type Result struct {
-	output string
+type ExeRs struct {
+	rs string
 	err    error
 }
 
-// 执行shell命令，可设置执行超时时间
+// Exec 执行shell指令
 func Exec(ctx context.Context, command string) (string, error) {
 	cmd := exec.Command("/bin/bash", "-c", command)
 	cmd.SysProcAttr = &syscall.SysProcAttr{
 		Setpgid: true,
 	}
-	resultChan := make(chan Result)
+	resultChan := make(chan ExeRs)
 	go func() {
 		output, err := cmd.CombinedOutput()
-		resultChan <- Result{string(output), err}
+		resultChan <- ExeRs{string(output), err}
 	}()
 	select {
 	case <-ctx.Done():
 		if cmd.Process.Pid > 0 {
-			syscall.Kill(-cmd.Process.Pid, syscall.SIGKILL)
+			_ = syscall.Kill(-cmd.Process.Pid, syscall.SIGKILL)
 		}
-		return "", errors.New("timeout")
+		return "", fmt.Errorf("cmd:%s,err:%s",command,"timeout")
 	case result := <-resultChan:
-		return result.output, result.err
+		return result.rs, result.err
 	}
 }
